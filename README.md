@@ -1,2 +1,116 @@
 # Audio-Mechanica-2025
 Live audio effects (Flanger, Xover Distortion, Bit Crusher)
+
+
+             AUDIO MECHANICA 2025 (BIT CRUSHER EDITION)
+
+
+I'm back! Fancy an update to a software project that I abandoned in 2008!
+
+To be honest, this isn't so much an update, but a different slant on the
+project, since this version doesn't even record, but operates almost live,
+exploring the possibility of producing live effects for guitar!
+It's little more than an interesting demo however, due to the lag between
+filling the audio input buffer, and populating the output buffer, there's
+enough delay to put anyone off using it for anything rhythmic in real time.
+Maybe it could potentially serve as a wet delay channel in a multi amp rig,
+or inline for recording guitar to a PC.
+
+If any PSP homebrew people out there have any idea how to lower the sample
+chunk sizes from 1024 down to 512, or 256, please let me know. This might
+be enough to use a PSP live without too much noticeable lag. It looks like
+the key to this would be the ability to change PSP_NUM_AUDIO_SAMPLES, which
+is defined in pspaudiolib.h I don't know if it's is possible, or how to do
+it, but there is at least another effect I'd like to write (phaser), but I
+consider the above a bit of a brick wall to produce anything practical.
+
+This version has been redone beginning from a 2006 version of the program.
+
+The first, easiest, and most obvious effect, after the delay and echo that
+were already present in the original software versions, is "bit crushing".
+The bit crusher reduces the resolution of the 16 bit samples as they are
+passing through the buffer, resulting in a more stepped waveform, and more
+harsh sound. The software also performs non-constant downsampling to avoid
+a lot of the humming associated with this effect.
+
+Settings for sample rate reduction and resolution reduction are available,
+but when the bit crusher mode is active, there is always a little of both,
+and the sample rate reduction is always non-constant.
+
+The next new effect is crossover distortion. Unlike clipping distortion,
+which clips the tops and bottoms of the audio wave, crossover distortion
+flattens the area around the zero point of the wave, simulating a pair of
+back to back diodes in series with the signal path. This software version
+is more flexible then hardware diodes however, because the exact level of
+crossover distortion is adjustable from none at all, to a very high value.
+Typical physical options are using silicon, Schotky, or germanium diodes.
+
+Next is a flanger, written with help from ChatGPT, and results that could
+be expected. Let's just say it's "something", but not a typical flanger.
+I called it a "Drip Flanger" because a low setting sounds like dripping.
+Like a flanger, it makes a copy of the input waveform to a circular buffer.
+An LFO created with a sin table varies an index that addresses the delay
+buffer, and mixes samples from the delay buffer with the current buffer.
+This is how a flanger works, but again, the result here isn't the same.
+It's more like a constant vibrato, with too high a sine index amplitude.
+
+Looks like I've figured out a typical flanger, so I retained the previous
+effort, and named the next effect "flanger". It has a clean output and a
+wet output like other effect modes. Both output channels (Left and Right)
+suffer from an overall lag, but both are well synchronised with each other.
+
+This 2025 version is only tested on PSP-3000 model, but should work with
+all PSP models. For PSP-3000 you can test by simply plugging in a set of
+earbuds, since the PSP-3000 has a biult in microphone. To connect a guitar
+however, or even use this program with any other PSP model, a headphone
+remote is required to activate the external audio input. Those are getting
+difficult to come by for a price that wouldn't deter people from hacking a
+6.5mm instrument cable connector into one.
+
+I used a China clone of the remote that happened to have the audio input
+signal wired in the cable, even thouugh it was not used in the remote.
+It was possible to solder another wire from where it was hanging out into
+the remote assembly. You should solder a capacitor across this input and
+ground to help shunt noise from the PSP serial port that the remote uses.
+A good value is 0.01uF (capacitor code 104).
+
+youTube Video:
+https://www.youtube.com/watch?v=MlPtfeSyyak
+
+20/07/25:
+First acceptable bit crusher demo with user setting via button controls,
+and a user adjustable crossover distortion implementation.
+
+21/07/25:
+A strange kind of flanger implementation with a user adjustable setting.
+
+22/07/25:
+Double buffered wave display results in less flicker of audio waveform.
+
+23/07/25:
+Figured out a real flanger that actually sounds like a typical flanger.
+Did proper button debounce with counters instead of blocking delays.
+
+25/07/25:
+Used a jump table to seperate effects as distinguishable functions.
+
+27/07/25:
+Added a check that headphones or earphones are plugged in before the audio
+loop is able to start, otherwise a PSP-3000 with built in microphone will
+just make squealing feedback noise with it's speakers so close, and crash.
+
+30/07/25:
+Added a check for microphone. Unable to test with a PSP-3000 model which
+has one built in. Added support for bypass mode when the play/pause button
+on the headphone remote is pressed. Also untested until I have a remote.
+
+04/08/25
+Found that the problem with crashing is due to the visualiser. It was likely
+drawing out of bounds of it's memory image with high amplitude input signals.
+Crashing problems are solved when the program is compiled with the visualiser
+disabled. fixed for now, by lowering the amplitude of the graphic wave value.
+
+08/08/25
+Fixed a slight bug in wave display. Increased button debounce time for effect
+select buttons, and bypass buttons, including the remote play/pause button.
+
